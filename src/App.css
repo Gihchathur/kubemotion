@@ -376,3 +376,29 @@ textarea {
   outline: 2px solid #38bdf8;
   outline-offset: 2px;
 }
+
+.clear-editor-button {
+  padding: 7px 10px;
+  border: 1px solid #7f1d1d;
+  border-radius: 7px;
+  background: #450a0a;
+  color: #fecaca;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.clear-editor-button:hover {
+  border-color: #ef4444;
+  background: #7f1d1d;
+  color: #ffffff;
+}
+
+.clear-editor-button:focus-visible {
+  outline: 2px solid #f87171;
+  outline-offset: 2px;
+}

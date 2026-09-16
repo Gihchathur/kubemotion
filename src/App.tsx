@@ -125,6 +125,13 @@ function App() {
               >
                 Load example
               </button>
+              <button
+                type="button"
+                className="clear-editor-button"
+                onClick={() => setYamlInput('')}
+              >
+                Clear
+              </button>
 
               <span className="resource-count">
                 {parseResult.resources.length} resources
