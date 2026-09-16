@@ -613,3 +613,40 @@ textarea {
   height: 3px;
   border-radius: 999px;
 }
+
+.graph-statistics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 18px 0;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid #263449;
+  border-radius: 12px;
+  background: #111827;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-card strong {
+  color: #f8fafc;
+  font-size: 22px;
+  line-height: 1;
+}
+
+@media (max-width: 760px) {
+  .graph-statistics {
+    grid-template-columns: 1fr;
+  }
+}

@@ -501,6 +501,23 @@ function App() {
             </div>
           </div>
 
+          <div className="graph-statistics">
+            <div className="stat-card">
+              <span className="stat-label">Resources</span>
+              <strong>{graph.nodes.length}</strong>
+            </div>
+
+            <div className="stat-card">
+              <span className="stat-label">Visible</span>
+              <strong>{nodes.length}</strong>
+            </div>
+
+            <div className="stat-card">
+              <span className="stat-label">Relationships</span>
+              <strong>{edges.length}</strong>
+            </div>
+          </div>
+
           <div className="resource-legend">
             {[
               ['Deployment', '#38bdf8'],
@@ -573,6 +590,12 @@ function App() {
                 onPaneClick={() => setSelectedNodeId(null)}
                 onInit={setFlowInstance}
                 fitView
+                minZoom={0.2}
+                maxZoom={2}
+                defaultEdgeOptions={{
+                  type: 'smoothstep',
+                  animated: true,
+                }}
                 nodesDraggable
                 nodesConnectable={false}
                 elementsSelectable

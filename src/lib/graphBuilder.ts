@@ -50,14 +50,16 @@ function createNodes(resources: KubernetesResource[]): GraphNode[] {
     'ServiceAccount',
   ]
 
-  const layerSpacing = 220
-  const nodeSpacing = 280
+  const layerSpacing = 240
+  const nodeSpacing = 320
 
   return resources.map((resource) => {
     const layerIndex = layerOrder.indexOf(resource.kind)
+
     const sameLayerResources = resources.filter(
       (item) => item.kind === resource.kind,
     )
+
     const positionInLayer = sameLayerResources.findIndex(
       (item) => item.id === resource.id,
     )
@@ -68,8 +70,8 @@ function createNodes(resources: KubernetesResource[]): GraphNode[] {
       label: getResourceName(resource),
       resource,
       position: {
-        x: 80 + positionInLayer * nodeSpacing,
-        y: 80 + Math.max(layerIndex, 0) * layerSpacing,
+        x: 120 + positionInLayer * nodeSpacing,
+        y: 100 + Math.max(layerIndex, 0) * layerSpacing,
       },
     }
   })
@@ -95,7 +97,11 @@ function getSelector(
 ): Record<string, string> {
   const selector = resource.spec.selector
 
-  if (!selector || typeof selector !== 'object' || Array.isArray(selector)) {
+  if (
+    !selector ||
+    typeof selector !== 'object' ||
+    Array.isArray(selector)
+  ) {
     return {}
   }
 
@@ -134,10 +140,11 @@ function createServiceEdges(
     }
 
     for (const workload of workloads) {
-      if (
-        getResourceNamespace(service) === getResourceNamespace(workload) &&
-        labelsMatch(workload, selector)
-      ) {
+      const sameNamespace =
+        getResourceNamespace(service) ===
+        getResourceNamespace(workload)
+
+      if (sameNamespace && labelsMatch(workload, selector)) {
         edges.push(
           createEdge(
             service,
@@ -185,16 +192,28 @@ function createIngressEdges(
       spec.rules?.flatMap((rule) =>
         rule.http?.paths
           ?.map((path) => path.backend?.service?.name)
-          .filter((name): name is string => Boolean(name)),
+          .filter(
+            (name): name is string => Boolean(name),
+          ),
       ) ?? []
 
     for (const service of services) {
-      if (
-        getResourceNamespace(ingress) === getResourceNamespace(service) &&
-        serviceNames.includes(getResourceName(service))
-      ) {
+      const sameNamespace =
+        getResourceNamespace(ingress) ===
+        getResourceNamespace(service)
+
+      const serviceIsReferenced = serviceNames.includes(
+        getResourceName(service),
+      )
+
+      if (sameNamespace && serviceIsReferenced) {
         edges.push(
-          createEdge(ingress, service, 'ingress-to-service', 'routes to'),
+          createEdge(
+            ingress,
+            service,
+            'ingress-to-service',
+            'routes to',
+          ),
         )
       }
     }
@@ -208,83 +227,141 @@ function createVolumeAndConfigEdges(
 ): GraphEdge[] {
   const edges: GraphEdge[] = []
 
+  const resourcesById = new Map(
+    resources.map((resource) => [resource.id, resource]),
+  )
+
   const deployments = resources.filter(
     (resource) => resource.kind === 'Deployment',
   )
 
   for (const deployment of deployments) {
-    const template = deployment.spec.template as {
-        spec?: {
-            volumes?: {
-            configMap?: {
-                name?: string
-            }
-            secret?: {
-                secretName?: string
-            }
-            persistentVolumeClaim?: {
-                claimName?: string
-            }
-            }[]
-        }
-        } | undefined
+    const template = deployment.spec.template
 
-    
-    const volumes = template?.spec?.volumes ?? []
+    if (
+      !template ||
+      typeof template !== 'object' ||
+      Array.isArray(template)
+    ) {
+      continue
+    }
+
+    const podSpec = (template as Record<string, unknown>).spec
+
+    if (
+      !podSpec ||
+      typeof podSpec !== 'object' ||
+      Array.isArray(podSpec)
+    ) {
+      continue
+    }
+
+    const volumes = (podSpec as Record<string, unknown>).volumes
+
+    if (!Array.isArray(volumes)) {
+      continue
+    }
 
     for (const volume of volumes) {
-      const configMapName = volume.configMap?.name
-      const secretName = volume.secret?.secretName
-      const pvcName = volume.persistentVolumeClaim?.claimName
+      if (
+        !volume ||
+        typeof volume !== 'object' ||
+        Array.isArray(volume)
+      ) {
+        continue
+      }
 
-      for (const resource of resources) {
-        if (
-          getResourceNamespace(resource) !==
-          getResourceNamespace(deployment)
-        ) {
-          continue
-        }
+      const volumeRecord = volume as Record<string, unknown>
 
-        if (
-          resource.kind === 'ConfigMap' &&
-          resource.metadata.name === configMapName
-        ) {
-          edges.push(
-            createEdge(
-              deployment,
-              resource,
-              'deployment-to-configmap',
-              'mounts',
-            ),
+      if (typeof volumeRecord.name !== 'string') {
+        continue
+      }
+
+      const configMap = volumeRecord.configMap
+
+      if (
+        configMap &&
+        typeof configMap === 'object' &&
+        !Array.isArray(configMap)
+      ) {
+        const configMapName = (
+          configMap as Record<string, unknown>
+        ).name
+
+        if (typeof configMapName === 'string') {
+          const target = resourcesById.get(
+            `${deployment.metadata.namespace}/ConfigMap/${configMapName}`,
           )
-        }
 
-        if (
-          resource.kind === 'Secret' &&
-          resource.metadata.name === secretName
-        ) {
-          edges.push(
-            createEdge(
-              deployment,
-              resource,
-              'deployment-to-secret',
-              'mounts',
-            ),
-          )
+          if (target) {
+            edges.push(
+              createEdge(
+                deployment,
+                target,
+                'deployment-to-configmap',
+                'config',
+              ),
+            )
+          }
         }
+      }
 
-        if (
-          resource.kind === 'PersistentVolumeClaim' &&
-          resource.metadata.name === pvcName
-        ) {
-          edges.push(
-            createEdge(
-              deployment,
-              resource,
-              'deployment-to-pvc',
-              'mounts',
-            ),
+      const secret = volumeRecord.secret
+
+      if (
+        secret &&
+        typeof secret === 'object' &&
+        !Array.isArray(secret)
+      ) {
+        const secretName = (
+          secret as Record<string, unknown>
+        ).secretName
+
+        if (typeof secretName === 'string') {
+          const target = resourcesById.get(
+            `${deployment.metadata.namespace}/Secret/${secretName}`,
           )
+
+          if (target) {
+            edges.push(
+              createEdge(
+                deployment,
+                target,
+                'deployment-to-secret',
+                'secret',
+              ),
+            )
+          }
+        }
+      }
+
+      const persistentVolumeClaim =
+        volumeRecord.persistentVolumeClaim
+
+      if (
+        persistentVolumeClaim &&
+        typeof persistentVolumeClaim === 'object' &&
+        !Array.isArray(persistentVolumeClaim)
+      ) {
+        const claimName = (
+          persistentVolumeClaim as Record<string, unknown>
+        ).claimName
+
+        if (typeof claimName === 'string') {
+          const target = resourcesById.get(
+            `${deployment.metadata.namespace}/PersistentVolumeClaim/${claimName}`,
+          )
+
+          if (target) {
+            edges.push(
+              createEdge(
+                deployment,
+                target,
+                'deployment-to-pvc',
+                'storage',
+              ),
+            )
+          }
         }
       }
     }
