@@ -54,6 +54,8 @@ function App() {
 
   const [searchQuery, setSearchQuery] = useState('')
 
+  const [kindFilter, setKindFilter] = useState('all')
+
   const [flowInstance, setFlowInstance] =
   useState<ReactFlowInstance | null>(null)
 
@@ -92,7 +94,9 @@ function App() {
   )
 
   const selectedNode = graph.nodes.find(
-    (node) => node.id === selectedNodeId,
+    (node) =>
+      node.id === selectedNodeId &&
+      visibleNodeIds.has(node.id),
   )
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase()
@@ -100,19 +104,23 @@ function App() {
   const visibleNodeIds = new Set(
     graph.nodes
       .filter((node) => {
-        if (!normalizedSearchQuery) {
-          return true
-        }
+        const matchesSearch =
+          !normalizedSearchQuery ||
+          [
+            node.label,
+            node.type,
+            node.resource.kind,
+            node.resource.metadata.namespace,
+          ]
+            .join(' ')
+            .toLowerCase()
+            .includes(normalizedSearchQuery)
 
-        return [
-          node.label,
-          node.type,
-          node.resource.kind,
-          node.resource.metadata.namespace,
-        ]
-          .join(' ')
-          .toLowerCase()
-          .includes(normalizedSearchQuery)
+        const matchesKind =
+          kindFilter === 'all' ||
+          node.resource.kind.toLowerCase() === kindFilter
+
+        return matchesSearch && matchesKind
       })
       .map((node) => node.id),
   )
@@ -193,6 +201,13 @@ function App() {
                 Clear
               </button>
 
+              <span
+                className={`validation-badge ${
+                  parseResult.errors.length === 0 ? 'valid' : 'invalid'
+                }`}
+              >
+                {parseResult.errors.length === 0 ? 'Valid YAML' : 'Invalid YAML'}
+              </span>
               <span className="resource-count">
                 {parseResult.resources.length} resources
               </span>
@@ -235,14 +250,46 @@ function App() {
               <h2>Architecture graph</h2>
             </div>
 
-            <input
-              className="resource-search"
-              type="search"
-              placeholder="Search resources..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              aria-label="Search Kubernetes resources"
-            />
+            
+
+            <div className="search-controls">
+              <select
+                className="resource-kind-filter"
+                value={kindFilter}
+                onChange={(event) => setKindFilter(event.target.value)}
+                aria-label="Filter resources by kind"
+              >
+                <option value="all">All kinds</option>
+                <option value="deployment">Deployment</option>
+                <option value="service">Service</option>
+                <option value="ingress">Ingress</option>
+                <option value="pod">Pod</option>
+                <option value="configmap">ConfigMap</option>
+                <option value="secret">Secret</option>
+                <option value="persistentvolumeclaim">
+                  PersistentVolumeClaim
+                </option>
+              </select>
+
+              <input
+                className="resource-search"
+                type="search"
+                placeholder="Search resources..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                aria-label="Search Kubernetes resources"
+              />
+
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="clear-search-button"
+                  onClick={() => setSearchQuery('')}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
 
             <div className="editor-actions">
               <button
@@ -254,8 +301,8 @@ function App() {
                 Reset view
               </button>
 
-              <span className="resource-count">
-                {graph.nodes.length} nodes · {graph.edges.length} edges
+              <span className="resource-count search-result-count">
+                {nodes.length} of {graph.nodes.length} nodes · {edges.length} edges
               </span>
             </div>
           </div>
@@ -281,15 +328,23 @@ function App() {
           </div>
 
           <div className="flow-wrapper">
-            {graph.nodes.length === 0 ? (
+            {nodes.length === 0 ? (
               <div className="empty-state">
-                <strong>No graph available</strong>
+                <strong>
+                  {graph.nodes.length === 0
+                    ? 'No graph available'
+                    : 'No matching resources'}
+                </strong>
+
                 <span>
-                  Enter valid Kubernetes YAML to generate a graph.
+                  {graph.nodes.length === 0
+                    ? 'Enter valid Kubernetes YAML to generate a graph.'
+                    : 'Try a different resource name, kind, or namespace.'}
                 </span>
               </div>
             ) : (
               <ReactFlow
+                key={`${nodes.length}-${edges.length}-${searchQuery}`}
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={nodeTypes}
@@ -311,8 +366,19 @@ function App() {
           {selectedNode && (
             <div className="resource-details">
               <div className="resource-details-header">
-                <strong>{selectedNode.label}</strong>
-                <span>{selectedNode.type}</span>
+                <div className="resource-title">
+                  <strong>{selectedNode.label}</strong>
+                  <span>{selectedNode.type}</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="close-details-button"
+                  onClick={() => setSelectedNodeId(null)}
+                  aria-label="Close resource details"
+                >
+                  ×
+                </button>
               </div>
 
               <div className="resource-details-meta">

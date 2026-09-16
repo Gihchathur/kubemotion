@@ -309,8 +309,8 @@ textarea {
 
 .resource-details-header {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
 }
 
@@ -489,4 +489,115 @@ textarea {
   border-color: #38bdf8;
   outline: 2px solid #38bdf833;
   outline-offset: 1px;
+}
+
+.search-result-count {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.validation-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.validation-badge.valid {
+  border-color: #166534;
+  background: #052e16;
+  color: #86efac;
+}
+
+.validation-badge.invalid {
+  border-color: #991b1b;
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.search-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clear-search-button {
+  padding: 7px 9px;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  background: #172033;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.clear-search-button:hover {
+  border-color: #38bdf8;
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.clear-search-button:focus-visible,
+.close-details-button:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.resource-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.close-details-button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  background: #172033;
+  color: #cbd5e1;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close-details-button:hover {
+  border-color: #f87171;
+  background: #450a0a;
+  color: #fecaca;
+}
+
+.resource-kind-filter {
+  min-width: 125px;
+  padding: 7px 10px;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  background: #0b1220;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 11px;
+}
+
+.resource-kind-filter:focus {
+  border-color: #38bdf8;
+  outline: 2px solid #38bdf833;
+  outline-offset: 1px;
+}
+
+@media (max-width: 900px) {
+  .search-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .resource-search {
+    flex: 1;
+    width: auto;
+  }
 }
