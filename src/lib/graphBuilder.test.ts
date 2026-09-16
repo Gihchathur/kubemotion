@@ -173,5 +173,23 @@ spec:
   expect(deployment).toBeDefined()
   expect(service!.position.y).toBeLessThan(deployment!.position.y)
 })
+it('creates a ServiceAccount node', () => {
+  const resources = parseKubernetesYaml(`
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web-service-account
+  namespace: production
+`).resources
+
+  const graph = buildKubernetesGraph(resources)
+
+  expect(graph.nodes).toHaveLength(1)
+  expect(graph.nodes[0]).toMatchObject({
+    id: 'production/ServiceAccount/web-service-account',
+    type: 'serviceaccount',
+    label: 'web-service-account',
+  })
+})
 })
 

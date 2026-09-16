@@ -8,6 +8,7 @@ export type GraphNodeType =
   | 'configmap'
   | 'secret'
   | 'pvc'
+  | 'serviceaccount'
 
 export type GraphEdgeType =
   | 'service-to-deployment'

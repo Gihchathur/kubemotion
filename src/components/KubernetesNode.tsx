@@ -20,6 +20,7 @@ const KIND_COLORS: Record<string, string> = {
   configmap: '#14b8a6',
   secret: '#f43f5e',
   pvc: '#e879f9',
+  serviceaccount: '#facc15',
 }
 
 function KubernetesNode({ data }: NodeProps<KubernetesNodeType>) {

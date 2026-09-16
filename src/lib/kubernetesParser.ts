@@ -15,6 +15,7 @@ const SUPPORTED_KINDS: ReadonlySet<string> = new Set([
   'ConfigMap',
   'Secret',
   'PersistentVolumeClaim',
+  'ServiceAccount',
 ])
 
 interface RawKubernetesDocument {

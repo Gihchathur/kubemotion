@@ -19,6 +19,7 @@ const KIND_TO_NODE_TYPE: Record<string, GraphNodeType> = {
   ConfigMap: 'configmap',
   Secret: 'secret',
   PersistentVolumeClaim: 'pvc',
+  ServiceAccount: 'serviceaccount',
 }
 
 function getNodeId(resource: KubernetesResource): string {
@@ -46,6 +47,7 @@ function createNodes(resources: KubernetesResource[]): GraphNode[] {
     'ConfigMap',
     'Secret',
     'PersistentVolumeClaim',
+    'ServiceAccount',
   ]
 
   const layerSpacing = 220

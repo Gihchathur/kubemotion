@@ -601,3 +601,15 @@ textarea {
     width: auto;
   }
 }
+
+.legend-divider {
+  width: 1px;
+  min-height: 16px;
+  background: #334155;
+}
+
+.legend-line {
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+}
