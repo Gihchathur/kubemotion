@@ -6,6 +6,7 @@ import {
   ReactFlow,
   type Edge,
   type Node,
+  type ReactFlowInstance,
 } from '@xyflow/react'
 import './App.css'
 import { buildKubernetesGraph } from './lib/graphBuilder'
@@ -50,6 +51,9 @@ const nodeTypes = {
 function App() {
   const [yamlInput, setYamlInput] = useState(INITIAL_YAML)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+
+  const [flowInstance, setFlowInstance] =
+  useState<ReactFlowInstance | null>(null)
 
   useEffect(() => {
     const handleKeyboardShortcut = (event: KeyboardEvent) => {
@@ -156,6 +160,14 @@ function App() {
               >
                 Clear
               </button>
+              <button
+                type="button"
+                className="reset-graph-button"
+                onClick={() => flowInstance?.fitView({ duration: 500 })}
+                disabled={!flowInstance}
+              >
+                Reset view
+              </button>
 
               <span className="resource-count">
                 {parseResult.resources.length} resources
@@ -219,6 +231,7 @@ function App() {
                 nodeTypes={nodeTypes}
                 onNodeClick={(_, node) => setSelectedNodeId(node.id)}
                 onPaneClick={() => setSelectedNodeId(null)}
+                onInit={setFlowInstance}
                 fitView
                 nodesDraggable
                 nodesConnectable={false}

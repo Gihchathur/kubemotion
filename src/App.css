@@ -413,3 +413,34 @@ textarea {
 .shortcut-hints span {
   white-space: nowrap;
 }
+
+.reset-graph-button {
+  padding: 7px 10px;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  background: #172033;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.reset-graph-button:hover:not(:disabled) {
+  border-color: #38bdf8;
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.reset-graph-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.reset-graph-button:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
