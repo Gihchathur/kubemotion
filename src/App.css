@@ -298,14 +298,38 @@ textarea {
 
 .resource-details {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
   padding: 16px 20px;
   border-top: 1px solid #1e293b;
   background: #111827;
   color: #94a3b8;
   font-size: 12px;
+}
+
+.resource-details-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.resource-details-header strong {
+  color: #f8fafc;
+  font-size: 14px;
+}
+
+.resource-details-header span,
+.resource-details-meta span {
+  padding: 4px 8px;
+  border: 1px solid #334155;
+  border-radius: 6px;
+}
+
+.resource-details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .resource-details strong {
@@ -317,4 +341,38 @@ textarea {
   padding: 4px 8px;
   border: 1px solid #334155;
   border-radius: 6px;
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.load-example-button {
+  padding: 7px 10px;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  background: #172033;
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.load-example-button:hover {
+  border-color: #38bdf8;
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.load-example-button:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
 }

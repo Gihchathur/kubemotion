@@ -117,9 +117,19 @@ function App() {
               <h2>Kubernetes YAML</h2>
             </div>
 
-            <span className="resource-count">
-              {parseResult.resources.length} resources
-            </span>
+            <div className="editor-actions">
+              <button
+                type="button"
+                className="load-example-button"
+                onClick={() => setYamlInput(INITIAL_YAML)}
+              >
+                Load example
+              </button>
+
+              <span className="resource-count">
+                {parseResult.resources.length} resources
+              </span>
+            </div>
           </div>
 
           <div className="yaml-editor">
@@ -170,9 +180,8 @@ function App() {
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={nodeTypes}
-                onNodeClick={(_, node) =>
-                  setSelectedNodeId(node.id)
-                }
+                onNodeClick={(_, node) => setSelectedNodeId(node.id)}
+                onPaneClick={() => setSelectedNodeId(null)}
                 fitView
                 nodesDraggable
                 nodesConnectable={false}
@@ -187,11 +196,28 @@ function App() {
 
           {selectedNode && (
             <div className="resource-details">
-              <strong>{selectedNode.label}</strong>
-              <span>{selectedNode.type}</span>
-              <span>
-                Namespace: {selectedNode.resource.metadata.namespace}
-              </span>
+              <div className="resource-details-header">
+                <strong>{selectedNode.label}</strong>
+                <span>{selectedNode.type}</span>
+              </div>
+
+              <div className="resource-details-meta">
+                <span>
+                  API: {selectedNode.resource.apiVersion}
+                </span>
+
+                <span>
+                  Namespace: {selectedNode.resource.metadata.namespace}
+                </span>
+
+                {Object.entries(selectedNode.resource.metadata.labels).map(
+                  ([key, value]) => (
+                    <span key={`${key}-${value}`}>
+                      {key}: {value}
+                    </span>
+                  ),
+                )}
+              </div>
             </div>
           )}
         </section>
