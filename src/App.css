@@ -468,3 +468,25 @@ textarea {
   border-radius: 50%;
   flex-shrink: 0;
 }
+
+.resource-search {
+  width: 180px;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  background: #0b1220;
+  color: #f8fafc;
+  font: inherit;
+  font-size: 11px;
+}
+
+.resource-search::placeholder {
+  color: #64748b;
+}
+
+.resource-search:focus {
+  border-color: #38bdf8;
+  outline: 2px solid #38bdf833;
+  outline-offset: 1px;
+}

@@ -52,6 +52,8 @@ function App() {
   const [yamlInput, setYamlInput] = useState(INITIAL_YAML)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
 
+  const [searchQuery, setSearchQuery] = useState('')
+
   const [flowInstance, setFlowInstance] =
   useState<ReactFlowInstance | null>(null)
 
@@ -93,7 +95,31 @@ function App() {
     (node) => node.id === selectedNodeId,
   )
 
-  const nodes: Node[] = graph.nodes.map((node) => ({
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase()
+
+  const visibleNodeIds = new Set(
+    graph.nodes
+      .filter((node) => {
+        if (!normalizedSearchQuery) {
+          return true
+        }
+
+        return [
+          node.label,
+          node.type,
+          node.resource.kind,
+          node.resource.metadata.namespace,
+        ]
+          .join(' ')
+          .toLowerCase()
+          .includes(normalizedSearchQuery)
+      })
+      .map((node) => node.id),
+  )
+
+  const nodes: Node[] = graph.nodes
+    .filter((node) => visibleNodeIds.has(node.id))
+    .map((node) => ({
     id: node.id,
     position: node.position,
     type: 'kubernetes',
@@ -103,7 +129,13 @@ function App() {
     },
   }))
 
-  const edges: Edge[] = graph.edges.map((edge) => ({
+  const edges: Edge[] = graph.edges
+    .filter(
+      (edge) =>
+        visibleNodeIds.has(edge.source) &&
+        visibleNodeIds.has(edge.target),
+    )
+    .map((edge) => ({
     id: edge.id,
     source: edge.source,
     target: edge.target,
@@ -202,6 +234,15 @@ function App() {
               <span className="eyebrow">Visualization</span>
               <h2>Architecture graph</h2>
             </div>
+
+            <input
+              className="resource-search"
+              type="search"
+              placeholder="Search resources..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label="Search Kubernetes resources"
+            />
 
             <div className="editor-actions">
               <button
