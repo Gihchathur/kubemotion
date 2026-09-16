@@ -125,4 +125,53 @@ spec:
 
     expect(graph.edges).toHaveLength(0)
   })
+
+  it('places services above deployments', () => {
+  const yaml = `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: default
+  labels:
+    app: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: nginx:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  namespace: default
+spec:
+  selector:
+    app: web
+`
+
+  const parseResult = parseKubernetesYaml(yaml)
+  const graph = buildKubernetesGraph(parseResult.resources)
+
+  const deployment = graph.nodes.find(
+    (node) => node.resource.kind === 'Deployment',
+  )
+
+  const service = graph.nodes.find(
+    (node) => node.resource.kind === 'Service',
+  )
+
+  expect(service).toBeDefined()
+  expect(deployment).toBeDefined()
+  expect(service!.position.y).toBeLessThan(deployment!.position.y)
 })
+})
+

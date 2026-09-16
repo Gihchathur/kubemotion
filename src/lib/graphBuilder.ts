@@ -1,4 +1,8 @@
-import type { KubernetesResource } from '../types/kubernetes'
+import type {
+  KubernetesResource,
+  KubernetesResourceKind,
+} from '../types/kubernetes'
+
 import type {
   GraphEdge,
   GraphEdgeType,
@@ -34,16 +38,39 @@ function getResourceNamespace(resource: KubernetesResource): string {
 }
 
 function createNodes(resources: KubernetesResource[]): GraphNode[] {
-  return resources.map((resource, index) => ({
-    id: getNodeId(resource),
-    type: getNodeType(resource),
-    label: getResourceName(resource),
-    resource,
-    position: {
-      x: 80 + (index % 3) * 280,
-      y: 80 + Math.floor(index / 3) * 180,
-    },
-  }))
+  const layerOrder: KubernetesResourceKind[] = [
+    'Ingress',
+    'Service',
+    'Deployment',
+    'Pod',
+    'ConfigMap',
+    'Secret',
+    'PersistentVolumeClaim',
+  ]
+
+  const layerSpacing = 220
+  const nodeSpacing = 280
+
+  return resources.map((resource) => {
+    const layerIndex = layerOrder.indexOf(resource.kind)
+    const sameLayerResources = resources.filter(
+      (item) => item.kind === resource.kind,
+    )
+    const positionInLayer = sameLayerResources.findIndex(
+      (item) => item.id === resource.id,
+    )
+
+    return {
+      id: getNodeId(resource),
+      type: getNodeType(resource),
+      label: getResourceName(resource),
+      resource,
+      position: {
+        x: 80 + positionInLayer * nodeSpacing,
+        y: 80 + Math.max(layerIndex, 0) * layerSpacing,
+      },
+    }
+  })
 }
 
 function createEdge(

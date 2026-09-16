@@ -11,7 +11,7 @@ import './App.css'
 import { buildKubernetesGraph } from './lib/graphBuilder'
 import { parseKubernetesYaml } from './lib/kubernetesParser'
 import KubernetesNode from './components/KubernetesNode'
-
+import YamlEditor from './components/YamlEditor'
 
 const INITIAL_YAML = `apiVersion: apps/v1
 kind: Deployment
@@ -43,12 +43,13 @@ spec:
     - port: 80
       targetPort: 80`
 
-
 const nodeTypes = {
   kubernetes: KubernetesNode,
 }
+
 function App() {
   const [yamlInput, setYamlInput] = useState(INITIAL_YAML)
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
 
   const parseResult = useMemo(
     () => parseKubernetesYaml(yamlInput),
@@ -58,6 +59,10 @@ function App() {
   const graph = useMemo(
     () => buildKubernetesGraph(parseResult.resources),
     [parseResult.resources],
+  )
+
+  const selectedNode = graph.nodes.find(
+    (node) => node.id === selectedNodeId,
   )
 
   const nodes: Node[] = graph.nodes.map((node) => ({
@@ -91,6 +96,7 @@ function App() {
       <header className="topbar">
         <div className="brand">
           <div className="brand-mark">K</div>
+
           <div>
             <h1>KubeMotion</h1>
             <p>Kubernetes architecture visualizer</p>
@@ -110,18 +116,18 @@ function App() {
               <span className="eyebrow">Input</span>
               <h2>Kubernetes YAML</h2>
             </div>
+
             <span className="resource-count">
               {parseResult.resources.length} resources
             </span>
           </div>
 
-          <textarea
-            className="yaml-editor"
-            value={yamlInput}
-            onChange={(event) => setYamlInput(event.target.value)}
-            spellCheck={false}
-            aria-label="Kubernetes YAML input"
-          />
+          <div className="yaml-editor">
+            <YamlEditor
+              value={yamlInput}
+              onChange={setYamlInput}
+            />
+          </div>
 
           <div className="editor-footer">
             <span>{yamlInput.length} characters</span>
@@ -131,7 +137,9 @@ function App() {
           {parseResult.errors.length > 0 && (
             <div className="error-panel">
               {parseResult.errors.map((error, index) => (
-                <p key={`${error.message}-${index}`}>{error.message}</p>
+                <p key={`${error.message}-${index}`}>
+                  {error.message}
+                </p>
               ))}
             </div>
           )}
@@ -143,6 +151,7 @@ function App() {
               <span className="eyebrow">Visualization</span>
               <h2>Architecture graph</h2>
             </div>
+
             <span className="resource-count">
               {graph.nodes.length} nodes · {graph.edges.length} edges
             </span>
@@ -152,13 +161,18 @@ function App() {
             {graph.nodes.length === 0 ? (
               <div className="empty-state">
                 <strong>No graph available</strong>
-                <span>Enter valid Kubernetes YAML to generate a graph.</span>
+                <span>
+                  Enter valid Kubernetes YAML to generate a graph.
+                </span>
               </div>
             ) : (
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={nodeTypes}
+                onNodeClick={(_, node) =>
+                  setSelectedNodeId(node.id)
+                }
                 fitView
                 nodesDraggable
                 nodesConnectable={false}
@@ -170,6 +184,16 @@ function App() {
               </ReactFlow>
             )}
           </div>
+
+          {selectedNode && (
+            <div className="resource-details">
+              <strong>{selectedNode.label}</strong>
+              <span>{selectedNode.type}</span>
+              <span>
+                Namespace: {selectedNode.resource.metadata.namespace}
+              </span>
+            </div>
+          )}
         </section>
       </section>
 
