@@ -402,3 +402,14 @@ textarea {
   outline: 2px solid #f87171;
   outline-offset: 2px;
 }
+
+.shortcut-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #64748b;
+}
+
+.shortcut-hints span {
+  white-space: nowrap;
+}

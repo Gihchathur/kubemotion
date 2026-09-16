@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Background,
   Controls,
@@ -50,6 +50,30 @@ const nodeTypes = {
 function App() {
   const [yamlInput, setYamlInput] = useState(INITIAL_YAML)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const handleKeyboardShortcut = (event: KeyboardEvent) => {
+      if (!event.ctrlKey) {
+        return
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        setYamlInput(INITIAL_YAML)
+      }
+
+      if (event.shiftKey && event.key === 'Backspace') {
+        event.preventDefault()
+        setYamlInput('')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboardShortcut)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyboardShortcut)
+    }
+  }, [])
 
   const parseResult = useMemo(
     () => parseKubernetesYaml(yamlInput),
@@ -148,6 +172,12 @@ function App() {
 
           <div className="editor-footer">
             <span>{yamlInput.length} characters</span>
+
+            <span className="shortcut-hints">
+              <span>Ctrl + Enter: Load example</span>
+              <span>Ctrl + Shift + Backspace: Clear</span>
+            </span>
+
             <span>{parseResult.errors.length} errors</span>
           </div>
 
