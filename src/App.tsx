@@ -10,6 +10,8 @@ import {
 import './App.css'
 import { buildKubernetesGraph } from './lib/graphBuilder'
 import { parseKubernetesYaml } from './lib/kubernetesParser'
+import KubernetesNode from './components/KubernetesNode'
+
 
 const INITIAL_YAML = `apiVersion: apps/v1
 kind: Deployment
@@ -41,6 +43,10 @@ spec:
     - port: 80
       targetPort: 80`
 
+
+const nodeTypes = {
+  kubernetes: KubernetesNode,
+}
 function App() {
   const [yamlInput, setYamlInput] = useState(INITIAL_YAML)
 
@@ -57,18 +63,10 @@ function App() {
   const nodes: Node[] = graph.nodes.map((node) => ({
     id: node.id,
     position: node.position,
+    type: 'kubernetes',
     data: {
-      label: `${node.type.toUpperCase()}\n${node.label}`,
-    },
-    style: {
-      width: 190,
-      padding: 12,
-      border: '1px solid #475569',
-      borderRadius: 12,
-      background: '#172033',
-      color: '#f8fafc',
-      whiteSpace: 'pre-line',
-      fontSize: 12,
+      label: node.label,
+      kind: node.type,
     },
   }))
 
@@ -160,6 +158,7 @@ function App() {
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
+                nodeTypes={nodeTypes}
                 fitView
                 nodesDraggable
                 nodesConnectable={false}
