@@ -1,0 +1,385 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'Manrope', sans-serif;
+  color: #e8edf5;
+  background: #090c12;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #090c12;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(
+      ellipse at 70% -20%,
+      rgba(55, 92, 157, 0.13),
+      transparent 45%
+    ),
+    #090c12;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 32px;
+  border-bottom: 1px solid #202735;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #3b82f6;
+  border-radius: 12px;
+  color: #8bb9ff;
+  font-size: 22px;
+  font-weight: 800;
+  background: #101b30;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.1);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+}
+
+.brand p {
+  margin: 3px 0 0;
+  color: #7e899d;
+  font-size: 12px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.status-indicator,
+.canvas-status,
+.file-label,
+.editor-language,
+.panel-eyebrow,
+.panel-footer,
+.app-footer,
+.editor-hint {
+  font-family: 'DM Mono', monospace;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8490a5;
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #36d399;
+  box-shadow: 0 0 12px rgba(54, 211, 153, 0.5);
+}
+
+.example-button {
+  padding: 10px 16px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #d8e4f8;
+  background: #151d2b;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.example-button:hover {
+  border-color: #4b6b9f;
+  background: #1c2940;
+}
+
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 16px;
+  padding: 24px 32px;
+}
+
+.editor-panel,
+.visualization-panel {
+  min-width: 0;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #202b3d;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0e131d;
+}
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #202735;
+}
+
+.panel-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #6886b4;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+}
+
+.panel-header h2 {
+  margin: 0;
+  color: #f0f4fa;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.file-label,
+.canvas-status {
+  color: #66758d;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.editor-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #1a2332;
+  background: #0b1018;
+}
+
+.editor-language {
+  color: #8bb9ff;
+  font-size: 10px;
+}
+
+.editor-hint {
+  color: #536178;
+  font-size: 10px;
+}
+
+.yaml-editor {
+  flex: 1;
+  width: 100%;
+  min-height: 380px;
+  padding: 20px;
+  resize: none;
+  outline: none;
+  border: 0;
+  color: #b8c9e2;
+  background: transparent;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  tab-size: 2;
+}
+
+.yaml-editor::placeholder {
+  color: #3e4b60;
+}
+
+.yaml-editor:focus {
+  background: rgba(17, 30, 50, 0.2);
+}
+
+.canvas {
+  position: relative;
+  flex: 1;
+  min-height: 380px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #0b1018;
+}
+
+.canvas-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(#182231 1px, transparent 1px),
+    linear-gradient(90deg, #182231 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.55;
+  mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+}
+
+.empty-state {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  padding: 24px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border: 1px solid #263c5c;
+  border-radius: 14px;
+  color: #7daeff;
+  background: #111e32;
+  font-size: 24px;
+}
+
+.empty-state h3 {
+  margin: 0 0 10px;
+  color: #dce7f7;
+  font-size: 16px;
+  letter-spacing: -0.4px;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #718096;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.empty-hint {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  color: #5f7598;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+}
+
+.empty-hint span:nth-child(odd) {
+  padding: 5px 8px;
+  border: 1px solid #25334a;
+  border-radius: 5px;
+  background: #101925;
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  border-top: 1px solid #202735;
+  color: #526078;
+  font-size: 10px;
+}
+
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 32px;
+  border-top: 1px solid #202735;
+  color: #46546a;
+  font-size: 10px;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    padding: 18px 20px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+    padding: 16px 20px;
+  }
+
+  .editor-panel,
+  .visualization-panel {
+    min-height: 460px;
+  }
+
+  .yaml-editor {
+    min-height: 280px;
+  }
+
+  .app-footer {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .workspace {
+    padding: 12px;
+  }
+
+  .panel-header {
+    padding: 16px;
+  }
+
+  .panel-footer {
+    padding: 12px 16px;
+  }
+
+  .file-label {
+    display: none;
+  }
+
+  .app-footer {
+    padding: 14px 16px;
+  }
+}
