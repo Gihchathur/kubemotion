@@ -444,3 +444,27 @@ textarea {
   outline: 2px solid #38bdf8;
   outline-offset: 2px;
 }
+
+.resource-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 10px 20px;
+  border-bottom: 1px solid #1e293b;
+  background: #0f172a;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.legend-color {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

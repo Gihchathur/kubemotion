@@ -160,14 +160,6 @@ function App() {
               >
                 Clear
               </button>
-              <button
-                type="button"
-                className="reset-graph-button"
-                onClick={() => flowInstance?.fitView({ duration: 500 })}
-                disabled={!flowInstance}
-              >
-                Reset view
-              </button>
 
               <span className="resource-count">
                 {parseResult.resources.length} resources
@@ -211,9 +203,40 @@ function App() {
               <h2>Architecture graph</h2>
             </div>
 
-            <span className="resource-count">
-              {graph.nodes.length} nodes · {graph.edges.length} edges
-            </span>
+            <div className="editor-actions">
+              <button
+                type="button"
+                className="reset-graph-button"
+                onClick={() => flowInstance?.fitView({ duration: 500 })}
+                disabled={!flowInstance}
+              >
+                Reset view
+              </button>
+
+              <span className="resource-count">
+                {graph.nodes.length} nodes · {graph.edges.length} edges
+              </span>
+            </div>
+          </div>
+
+          <div className="resource-legend">
+            {[
+              ['Deployment', '#38bdf8'],
+              ['Service', '#a78bfa'],
+              ['Ingress', '#f59e0b'],
+              ['Pod', '#22c55e'],
+              ['ConfigMap', '#14b8a6'],
+              ['Secret', '#f43f5e'],
+              ['PVC', '#e879f9'],
+            ].map(([label, color]) => (
+              <span key={label} className="legend-item">
+                <span
+                  className="legend-color"
+                  style={{ backgroundColor: color }}
+                />
+                {label}
+              </span>
+            ))}
           </div>
 
           <div className="flow-wrapper">
