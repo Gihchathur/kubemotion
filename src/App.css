@@ -650,3 +650,29 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.stat-card-wide {
+  grid-column: 1 / -1;
+}
+
+.resource-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.breakdown-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.breakdown-item strong {
+  color: #f8fafc;
+  font-size: 13px;
+}

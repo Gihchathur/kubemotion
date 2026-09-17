@@ -249,6 +249,14 @@ function App() {
         event.preventDefault()
         setYamlInput('')
       }
+
+      if (event.key.toLowerCase() === 'f') {
+        event.preventDefault()
+        flowInstance?.fitView({
+          duration: 500,
+          padding: 0.2,
+        })
+      }
     }
 
     window.addEventListener('keydown', handleKeyboardShortcut)
@@ -298,6 +306,16 @@ function App() {
         return matchesSearch && matchesKind
       })
       .map((node) => node.id),
+  )
+
+  const resourceCounts = graph.nodes.reduce<Record<string, number>>(
+    (counts, node) => {
+      counts[node.resource.kind] =
+        (counts[node.resource.kind] ?? 0) + 1
+
+      return counts
+    },
+    {},
   )
 
   const nodes: Node[] = graph.nodes
@@ -420,6 +438,7 @@ function App() {
             <span className="shortcut-hints">
               <span>Ctrl + Enter: Load example</span>
               <span>Ctrl + Shift + Backspace: Clear</span>
+              <span>Ctrl + F: Fit graph</span>
             </span>
 
             <span>{parseResult.errors.length} errors</span>
@@ -489,10 +508,10 @@ function App() {
               <button
                 type="button"
                 className="reset-graph-button"
-                onClick={() => flowInstance?.fitView({ duration: 500 })}
+                onClick={() => flowInstance?.fitView({ duration: 500, padding: 0.2 })}
                 disabled={!flowInstance}
               >
-                Reset view
+                Fit graph
               </button>
 
               <span className="resource-count search-result-count">
@@ -515,6 +534,19 @@ function App() {
             <div className="stat-card">
               <span className="stat-label">Relationships</span>
               <strong>{edges.length}</strong>
+            </div>
+
+            <div className="stat-card stat-card-wide">
+              <span className="stat-label">Resource breakdown</span>
+
+              <div className="resource-breakdown">
+                {Object.entries(resourceCounts).map(([kind, count]) => (
+                  <span key={kind} className="breakdown-item">
+                    <span>{kind}</span>
+                    <strong>{count}</strong>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
