@@ -2,15 +2,7 @@
 /**
  * Kubernetes resource kinds supported by KubeMotion.
  */
-  export type KubernetesResourceKind =
-  | 'Deployment'
-  | 'Service'
-  | 'Ingress'
-  | 'Pod'
-  | 'ConfigMap'
-  | 'Secret'
-  | 'PersistentVolumeClaim'
-  | 'ServiceAccount'
+export type KubernetesResourceKind = string
 
 /**
  * Metadata shared by Kubernetes resources.

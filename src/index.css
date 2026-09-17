@@ -1,12 +1,1 @@
-
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-  margin: 0;
-}
-
-body {
-  min-width: 320px;
-}
+html,body,#root{margin:0;min-width:320px;min-height:100%;background:#080f1d}body{overflow-x:hidden}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}*{scrollbar-width:thin;scrollbar-color:#30415b #0b1424}

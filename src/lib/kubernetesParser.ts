@@ -7,17 +7,6 @@ import type {
   ParseResult,
 } from '../types/kubernetes'
 
-const SUPPORTED_KINDS: ReadonlySet<string> = new Set([
-  'Deployment',
-  'Service',
-  'Ingress',
-  'Pod',
-  'ConfigMap',
-  'Secret',
-  'PersistentVolumeClaim',
-  'ServiceAccount',
-])
-
 interface RawKubernetesDocument {
   apiVersion?: unknown
   kind?: unknown
@@ -52,13 +41,6 @@ function normalizeResource(
   if (typeof document.kind !== 'string') {
     return {
       message: 'Missing or invalid kind.',
-      documentIndex,
-    }
-  }
-
-  if (!SUPPORTED_KINDS.has(document.kind)) {
-    return {
-      message: `Unsupported resource kind: ${document.kind}.`,
       documentIndex,
     }
   }
@@ -158,6 +140,10 @@ export function parseKubernetesYaml(input: string): ParseResult {
     }
 
     resources.push(result)
+    if (!['Deployment', 'Service', 'Ingress', 'Pod', 'ConfigMap', 'Secret', 'PersistentVolumeClaim', 'ServiceAccount'].includes(result.kind)) {
+      const message = `Generic resource support: ${result.kind} is shown as a resource node; specialized relationships may be limited.`
+      if (!warnings.includes(message)) warnings.push(message)
+    }
   })
 
   if (resources.length === 0 && errors.length === 0) {

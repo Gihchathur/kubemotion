@@ -1,21 +1,8 @@
 import type { KubernetesResource } from './kubernetes'
 
-export type GraphNodeType =
-  | 'deployment'
-  | 'service'
-  | 'ingress'
-  | 'pod'
-  | 'configmap'
-  | 'secret'
-  | 'pvc'
-  | 'serviceaccount'
+export type GraphNodeType = string
 
-export type GraphEdgeType =
-  | 'service-to-deployment'
-  | 'ingress-to-service'
-  | 'deployment-to-configmap'
-  | 'deployment-to-secret'
-  | 'deployment-to-pvc'
+export type GraphEdgeType = string
 
 export interface GraphNode {
   id: string

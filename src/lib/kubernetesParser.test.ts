@@ -60,7 +60,7 @@ metadata:
     expect(result.errors.length).toBeGreaterThan(0)
   })
 
-  it('reports unsupported resource kinds', () => {
+  it('accepts additional Kubernetes resource kinds as generic nodes', () => {
     const input = `
 apiVersion: v1
 kind: Namespace
@@ -70,9 +70,10 @@ metadata:
 
     const result = parseKubernetesYaml(input)
 
-    expect(result.resources).toHaveLength(0)
-    expect(result.errors).toHaveLength(1)
-    expect(result.errors[0].message).toContain('Unsupported resource kind')
+    expect(result.resources).toHaveLength(1)
+    expect(result.errors).toHaveLength(0)
+    expect(result.resources[0].kind).toBe('Namespace')
+    expect(result.warnings[0]).toContain('Generic resource support')
   })
 
   it('returns an empty result for empty input', () => {

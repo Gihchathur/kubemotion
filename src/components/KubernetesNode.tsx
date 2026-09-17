@@ -8,6 +8,7 @@ import {
 type KubernetesNodeData = {
   label: string
   kind: string
+  tooltip?: string
 }
 
 type KubernetesNodeType = Node<KubernetesNodeData>
@@ -28,8 +29,10 @@ function KubernetesNode({ data }: NodeProps<KubernetesNodeType>) {
 
   return (
     <div
+      title={data.tooltip}
       style={{
-        minWidth: 190,
+        width: 190,
+        maxWidth: 190,
         overflow: 'hidden',
         border: `1px solid ${color}`,
         borderRadius: 14,
@@ -63,7 +66,7 @@ function KubernetesNode({ data }: NodeProps<KubernetesNodeType>) {
 
       <div
         style={{
-          padding: '16px 14px',
+          padding: '13px 12px',
           fontSize: 14,
           fontWeight: 600,
           textAlign: 'center',
